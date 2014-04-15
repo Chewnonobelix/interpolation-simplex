@@ -144,26 +144,26 @@ double Simplexe::hyperVolume() const
 
     switch(dimension())
     {
-    case 1:
-        factn = fact1::value;
-        p2 = pow2_1::value;
-        break;
-    case 2:
-        factn = fact2::value;
-        p2 = pow2_2::value;
-        break;
-    case 3:
-        factn = fact3::value;
-        p2 = pow2_3::value;
-        break;
-    case 4:
-        factn = fact4::value;
-        p2 = pow2_4::value;
-        break;
-    case 5:
-        factn = fact5::value;
-        p2 = pow2_5::value;
-        break;
+//    case 1:
+//        factn = fact1::value;
+//        p2 = pow2_1::value;
+//        break;
+//    case 2:
+//        factn = fact2::value;
+//        p2 = pow2_2::value;
+//        break;
+//    case 3:
+//        factn = fact3::value;
+//        p2 = pow2_3::value;
+//        break;
+//    case 4:
+//        factn = fact4::value;
+//        p2 = pow2_4::value;
+//        break;
+//    case 5:
+//        factn = fact5::value;
+//        p2 = pow2_5::value;
+//        break;
     default:
         factn = MetaProg::fFactorial(dimension());
         p2 = MetaProg::fPow(2,dimension());
@@ -173,4 +173,5 @@ double Simplexe::hyperVolume() const
     return 0;
     //a hauteur du simplex en un point xi <=> distance de a à l'hyperlan Hp={xj | xj != xi}
     //return (MetaProg::fPow(a,dimension())/factn)*sqrt((dimension()+1)/p2);
+    //ou return B*h/n avec B hypervolume du n-1 simplex opposé
 }

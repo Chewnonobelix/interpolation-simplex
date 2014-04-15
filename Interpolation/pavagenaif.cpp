@@ -49,13 +49,13 @@ Simplexe PavageNaif::getSimplexe(const Point & p) const
 {
     Simplexe ret;
 
-    for(std::vector<Simplexe>::iterator it = m_tab.begin();
+    for(std::vector<Simplexe>::const_iterator it = m_tab.begin();
         it != m_tab.end(); it ++)
     {
-        if(it->containPoint(p))
-        {
-            ret = *it;
-        }
+//        if(it->containPoint(p))
+//        {
+//            ret = *it;
+//        }
     }
 
      return ret;

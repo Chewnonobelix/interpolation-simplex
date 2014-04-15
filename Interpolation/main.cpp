@@ -2,8 +2,12 @@
 #include "point.h"
 #include "simplexe.h"
 #include "tree.h"
-#include "Eigen/Dense"
-
+//#include "Eigen/Dense"
+#include "boost/numeric/ublas/matrix.hpp"
+#include "boost/numeric/ublas/matrix_expression.hpp"
+#include "boost/numeric/ublas/triangular.hpp"
+#include <boost/numeric/ublas/io.hpp>
+#include "boost/numeric/ublas/vector.hpp"
 using namespace std;
 
 bool testTree()
@@ -42,11 +46,11 @@ bool testTree()
 
 void testFactoriel()
 {
-    std::cout<<"fact(1) = "<<MetaProg::factorial<1>::value<<std::endl;
-    std::cout<<"fact(2) = "<<MetaProg::factorial<2>::value<<std::endl;
-    std::cout<<"fact(3) = "<<MetaProg::factorial<3>::value<<std::endl;
-    std::cout<<"fact(4) = "<<MetaProg::factorial<4>::value<<std::endl;
-    std::cout<<"fact(5) = "<<MetaProg::factorial<5>::value<<std::endl;
+    std::cout<<"fact(1) = "<<MetaProg::valueOf<1>::fact<<std::endl;
+    std::cout<<"fact(2) = "<<MetaProg::valueOf<2>::fact<<std::endl;
+    std::cout<<"fact(3) = "<<MetaProg::valueOf<3>::fact<<std::endl;
+    std::cout<<"fact(4) = "<<MetaProg::valueOf<4>::fact<<std::endl;
+    std::cout<<"fact(5) = "<<MetaProg::valueOf<5>::fact<<std::endl;
 
     std::cout<<"fFact(1) = "<<MetaProg::fFactorial(1)<<std::endl;
     std::cout<<"fFact(2) = "<<MetaProg::fFactorial(2)<<std::endl;
@@ -57,12 +61,12 @@ void testFactoriel()
 
 void testPuissance2()
 {
-    std::cout<<"pow2(1) = "<<MetaProg::pow2<1>::value<<std::endl;
-    std::cout<<"pow2(2) = "<<MetaProg::pow2<2>::value<<std::endl;
-    std::cout<<"pow2(3) = "<<MetaProg::pow2<3>::value<<std::endl;
-    std::cout<<"pow2(4) = "<<MetaProg::pow2<4>::value<<std::endl;
-    std::cout<<"pow2(5) = "<<MetaProg::pow2<5>::value<<std::endl;
-    std::cout<<"pow2_5 = "<<pow2_5::value<<std::endl;
+    std::cout<<"pow2(1) = "<<MetaProg::valueOf<1>::pow2<<std::endl;
+    std::cout<<"pow2(2) = "<<MetaProg::valueOf<2>::pow2<<std::endl;
+    std::cout<<"pow2(3) = "<<MetaProg::valueOf<3>::pow2<<std::endl;
+    std::cout<<"pow2(4) = "<<MetaProg::valueOf<4>::pow2<<std::endl;
+    std::cout<<"pow2(5) = "<<MetaProg::valueOf<5>::pow2<<std::endl;
+    std::cout<<"pow2_5 = "<<valueOf5::pow2<<std::endl;
 
     std::cout<<"fPow(2,1) = "<<MetaProg::fPow(2,1)<<std::endl;
     std::cout<<"fPow(2,2) = "<<MetaProg::fPow(2,2)<<std::endl;
@@ -74,11 +78,11 @@ void testPuissance2()
 
 void testEigen()
 {
-    Eigen::MatrixXd test(10,10);
+//    Eigen::MatrixXd test(10,10);
 
-    test(1,2) = 42.0;
+//    test(1,2) = 42.0;
 
-    std::cout<<test(0,0)<<"    "<<test(1,2)<<std::endl;
+//    std::cout<<test(0,0)<<"    "<<test(1,2)<<std::endl;
 }
 
 int main()
@@ -94,6 +98,23 @@ int main()
 
     testFactoriel();
     testPuissance2();
+
+    ublas::matrix<double> m1 (3, 3);
+    ublas::vector<double> m2 (3);
+        for (unsigned i = 0; i < 3; ++ i)
+            for (unsigned j = 0; j < 3; ++ j)
+            {
+                m1 (i, j) = 3 * i + j + 1;
+                m2 (i) = i;
+            }
+        std::cout << "m1 = "<< m1 << std::endl;
+        std::cout << "m2 = "<< m2 << std::endl;
+        std::cout << ublas::solve (m1, m2, ublas::lower_tag ()) << std::endl; //M1*result = M2
+        std::cout << ublas::solve (m2, m1, ublas::lower_tag ()) << std::endl; //M2*result = M1
+        std::cout << "m1*m2 = "<<prod(m1,m2) << std::endl;
+        std::cout << "m2*m1 = "<<prod(m2,m1) << std::endl;
+
+
     return 0;
 }
 

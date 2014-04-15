@@ -11,49 +11,30 @@ namespace MetaProg
 {
     struct typeNull{};
 
-    template<int N> struct factorial;
-    template<int P> struct pow2;
+    template<int N> struct valueOf;
 
     template<>
-    struct factorial<1>
+    struct valueOf<1>
     {
-        enum {value = 1};
+        enum {fact = 1, pow2 = 2};
     };
 
     template <int N>
-    struct factorial
+    struct valueOf
     {
-        enum {value = N * MetaProg::factorial<N-1>::value};
-    };
-
-    template<>
-    struct pow2<1>
-    {
-        enum {value = 2};
-    };
-
-    template<int P>
-    struct pow2
-    {
-        enum {value = 2*pow2<P-1>::value};
+        enum {fact = N * valueOf<N-1>::fact,
+             pow2 = 2*valueOf<N-1>::pow2};
     };
 
     int fPow(double, int);
     int fFactorial(int);
 }
 
-typedef MetaProg::factorial<1> fact1;
-typedef MetaProg::factorial<2> fact2;
-typedef MetaProg::factorial<3> fact3;
-typedef MetaProg::factorial<4> fact4;
-typedef MetaProg::factorial<5> fact5;
-
-typedef MetaProg::pow2<1> pow2_1;
-typedef MetaProg::pow2<2> pow2_2;
-typedef MetaProg::pow2<3> pow2_3;
-typedef MetaProg::pow2<4> pow2_4;
-typedef MetaProg::pow2<5> pow2_5;
-
+typedef MetaProg::valueOf<1> valueOf1;
+typedef MetaProg::valueOf<2> valueOf2;
+typedef MetaProg::valueOf<3> valueOf3;
+typedef MetaProg::valueOf<4> valueOf4;
+typedef MetaProg::valueOf<5> valueOf5;
 
 class Simplexe
 {
