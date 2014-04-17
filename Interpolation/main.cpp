@@ -2,7 +2,6 @@
 #include "point.h"
 #include "simplexe.h"
 #include "tree.h"
-//#include "Eigen/Dense"
 #include "boost/numeric/ublas/matrix.hpp"
 #include "boost/numeric/ublas/matrix_expression.hpp"
 #include "boost/numeric/ublas/triangular.hpp"
@@ -76,13 +75,49 @@ void testPuissance2()
 
 }
 
-void testEigen()
+void testDistance()
 {
-//    Eigen::MatrixXd test(10,10);
+    Point p1(2), p2(2), p3(2);
 
-//    test(1,2) = 42.0;
+    p1(0) = 0;
+    p1(1) = 0;
 
-//    std::cout<<test(0,0)<<"    "<<test(1,2)<<std::endl;
+    p2(0) = 3;
+    p2(1) = 0;
+
+    p3(0) = 3;
+    p3(1) = 1;
+
+    Simplexe s2(1);
+    s2(0) = p2;
+    s2(1) = p3;
+
+    std::cout<<"Distance p1 à Simplexe(p2, p3) "<<s2.distance(p1)<<std::endl;
+}
+
+void testVolume()
+{
+    std::vector<Point> pt;
+    Point p1(2), p2(2), p3(2);
+
+    p1(0) = 0;
+    p1(1) = 0;
+
+    pt.push_back(p1);
+
+    p2(0) = 3;
+    p2(1) = 0;
+
+    pt.push_back(p2);
+
+    p3(0) = 3;
+    p3(1) = 1;
+
+    pt.push_back(p3);
+    Simplexe s (pt);
+
+    std::cout<<"Volume du triangle (0,0) (1,0) (1,1)"<<s.hyperVolume()<<std::endl;
+
 }
 
 int main()
@@ -98,21 +133,23 @@ int main()
 
     testFactoriel();
     testPuissance2();
+    testDistance();
+    testVolume();
 
     ublas::matrix<double> m1 (3, 3);
     ublas::vector<double> m2 (3);
-        for (unsigned i = 0; i < 3; ++ i)
-            for (unsigned j = 0; j < 3; ++ j)
-            {
-                m1 (i, j) = 3 * i + j + 1;
-                m2 (i) = i;
-            }
-        std::cout << "m1 = "<< m1 << std::endl;
-        std::cout << "m2 = "<< m2 << std::endl;
-        std::cout << ublas::solve (m1, m2, ublas::lower_tag ()) << std::endl; //M1*result = M2
-        std::cout << ublas::solve (m2, m1, ublas::lower_tag ()) << std::endl; //M2*result = M1
-        std::cout << "m1*m2 = "<<prod(m1,m2) << std::endl;
-        std::cout << "m2*m1 = "<<prod(m2,m1) << std::endl;
+    for (unsigned i = 0; i < 3; ++ i)
+        for (unsigned j = 0; j < 3; ++ j)
+        {
+            m1 (i, j) = 3 * i + j + 1;
+            m2 (i) = i;
+        }
+    std::cout << "m1 = "<< m1 << std::endl;
+    std::cout << "m2 = "<< m2 << std::endl;
+    std::cout << ublas::solve (m1, m2, ublas::lower_tag ()) << std::endl; //M1*result = M2
+    std::cout << ublas::solve (m2, m1, ublas::lower_tag ()) << std::endl; //M2*result = M1
+    std::cout << "m1*m2 = "<<prod(m1,m2) << std::endl;
+    std::cout << "m2*m1 = "<<prod(m2,m1) << std::endl;
 
 
     return 0;

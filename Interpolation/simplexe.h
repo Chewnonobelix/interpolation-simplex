@@ -6,6 +6,11 @@
 #include <iostream>
 
 
+#include "boost/numeric/ublas/matrix.hpp"
+#include "boost/numeric/ublas/matrix_expression.hpp"
+#include "boost/numeric/ublas/triangular.hpp"
+#include <boost/numeric/ublas/io.hpp>
+#include "boost/numeric/ublas/vector.hpp"
 
 namespace MetaProg
 {
@@ -44,6 +49,7 @@ private:
 
 public:
     Simplexe(int dimension = 2);
+    Simplexe(const std::vector<Point>&);
     Simplexe(const Simplexe& s);
     virtual ~Simplexe();
 
@@ -62,7 +68,8 @@ public:
     std::vector<Simplexe> decomposition(const Point& p) const;
     std::vector<Simplexe> hyperFace(int); //Hyper face de dimension M, avec M < N
 
-    double coordonneeBarycentrique(const Point& p) const;
+    double coordonneeBarycentrique(const Point& p) const; //Mauvais type de retour
+    double distance(const Point&) const;
 
     double hyperVolume() const;
 };

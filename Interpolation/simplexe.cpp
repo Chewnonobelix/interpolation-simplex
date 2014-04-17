@@ -1,6 +1,7 @@
 #include "simplexe.h"
 
 Simplexe::Simplexe(int dimension): m_points(dimension+1), m_dimension(dimension) {}
+Simplexe::Simplexe(const std::vector<Point> & t):m_points(t), m_dimension(t.size() - 1) {}
 Simplexe::Simplexe(const Simplexe& s): m_points(s.m_points), m_dimension(s.dimension()) {}
 Simplexe::~Simplexe() {}
 
@@ -139,39 +140,51 @@ int MetaProg::fPow(double a, int p)
 
 double Simplexe::hyperVolume() const
 {
-
-    int factn, p2;
-
-    switch(dimension())
+    if(dimension() >= 2)
     {
-//    case 1:
-//        factn = fact1::value;
-//        p2 = pow2_1::value;
-//        break;
-//    case 2:
-//        factn = fact2::value;
-//        p2 = pow2_2::value;
-//        break;
-//    case 3:
-//        factn = fact3::value;
-//        p2 = pow2_3::value;
-//        break;
-//    case 4:
-//        factn = fact4::value;
-//        p2 = pow2_4::value;
-//        break;
-//    case 5:
-//        factn = fact5::value;
-//        p2 = pow2_5::value;
-//        break;
-    default:
-        factn = MetaProg::fFactorial(dimension());
-        p2 = MetaProg::fPow(2,dimension());
-        break;
+        std::vector<Point> temp;
+        const Point& p = m_points[0];
+
+        temp.assign(m_points.begin() + 1, m_points.end());
+        const Simplexe st(temp);
+        return (st.hyperVolume()*(st.distance(p)))/dimension();
+    }
+    else
+    {
+        return m_points[0].distance(m_points[1]);
     }
 
-    return 0;
-    //a hauteur du simplex en un point xi <=> distance de a à l'hyperlan Hp={xj | xj != xi}
-    //return (MetaProg::fPow(a,dimension())/factn)*sqrt((dimension()+1)/p2);
-    //ou return B*h/n avec B hypervolume du n-1 simplex opposé
+}
+
+double Simplexe::distance(const Point & p) const
+{
+    ublas::matrix<double> matPoint(p.dimension(), p.dimension());
+
+    for(int i = 0; i < p.dimension(); i ++)
+    {
+        for(int j = 0; j < p.dimension(); j ++)
+        {
+            matPoint(i,j) = m_points[i](j);
+        }
+    }
+
+    ublas::vector<double> sol(p.dimension());
+    ublas::vector<double> eg(p.dimension());
+
+    for(int i = 0; i < p.dimension(); i ++)
+    {
+        eg(i) = -1;
+    }
+
+    sol = ublas::solve(matPoint, eg, ublas::lower_tag());
+
+    double ret1 = 0, ret2 = 0;
+
+    for(int i = 0; i < p.dimension(); i ++)
+    {
+        ret1 += sol(i)*p(i);
+        ret2 += sol(i)*sol(i);
+    }
+
+    return ((abs(ret1) + 1)/sqrt(ret2));
 }

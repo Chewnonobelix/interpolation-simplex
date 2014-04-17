@@ -17,7 +17,6 @@ HEADERS += \
     abstractpavage.h \
     pavagenaif.h
 
-INCLUDEPATH += ./boost #./Eigen
+INCLUDEPATH += ./boost
 
-#DEFINES += STAGE40_FULL_EIGEN3_STRICTNESS
 QMAKE_CXXFLAGS += -std=c++11

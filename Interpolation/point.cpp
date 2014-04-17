@@ -1,6 +1,6 @@
 #include "point.h"
 
-Point::Point(int dimension):m_coordonnees(dimension, 0)
+Point::Point(int dimension):m_coordonnees(dimension, 0), m_dimension(dimension)
 {}
 Point::Point(const Point& p):m_coordonnees(p.m_coordonnees), m_dimension(p.dimension())
 {}
