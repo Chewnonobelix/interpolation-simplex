@@ -187,10 +187,10 @@ int main()
 
 
     // Création d'un simplexe de base (de taille de la dimension)
-    std::vector<Point> tmp;
+    std::vector<Point> base;
     for(i=0; i<dim+1;i++)
-        tmp.push_back(liste[i]);
-    std::cout<<"taille tmp "<<tmp.size()<<std::endl;
+        base.push_back(liste[i]);
+    std::cout<<"taille pavage de base "<<base.size()<<std::endl;
 
     // Nouveau point
     Point g(liste[i]);
@@ -199,7 +199,7 @@ int main()
     //double ligne1[4] = {tmp[0](0)-g(0), tmp[1](0)-g(0), tmp[2](0)-g(0),0};
     //double ligne2[4] = {tmp[0](1)-g(1), tmp[1](1)-g(1), tmp[2](1)-g(1),0};
     //double ligne3[4] = {0,0,0,0};
-
+/*
     double ligne1[4] = {1,-1,2,5};
     double ligne2[4] = {3,2,1,10};
     double ligne3[4] = {2,-3,-2,-10};
@@ -268,15 +268,28 @@ int main()
     std::cout<<"b = "<<b<<std::endl;
     std::cout<<"a = "<<a<<std::endl;
 
-
+*/
 
     boost::numeric::ublas::matrix<double> m (dim+1, dim+2);
-    m(0,0) = 1; m(0,1) = -1; m(0,2)=2; m(0,3)=5;
-    m(1,0) = 3; m(1,1) = 2; m(1,2)=1; m(1,3)=10;
-    m(2,0) = 2; m(2,1) = -3; m(2,2)=-2; m(2,3)=-10;
+   // m(0,0) = 1; m(0,1) = -1; m(0,2)=2; m(0,3)=5;
+   // m(1,0) = 3; m(1,1) = 2; m(1,2)=1; m(1,3)=10;
+   // m(2,0) = 2; m(2,1) = -3; m(2,2)=-2; m(2,3)=-10;
 
     int h = dim+1;
     int l = dim+2;
+    double pivot;
+
+    // Remplissage du systeme
+    for(i=0;i<h-1;i++){
+        for(j=0;j<l-1;j++){
+            m(i,j) = base[j](i) - g(i);
+        }
+        m(i,j) = 0;
+    }
+    for(j=0;j<l;j++){
+        m(i,j) = 1;
+    }
+
     int x,y;
     std::cout<<"matrice "<<std::endl;
     for(x=0; x<h; x++){
@@ -285,6 +298,8 @@ int main()
         std::cout<<std::endl;
     }
     std::cout<<std::endl;
+
+    //return 1;
 
     for(i=0; i<h; i++){
 
@@ -355,6 +370,16 @@ int main()
         std::cout<<resultat[i]<<" ";
     }
     std::cout<<std::endl;
+
+    bool interieur = true;
+    for(i=0; i<resultat.size();i++){
+        if(resultat[i] >= 0){}
+        else{interieur=false;}
+    }
+    if(interieur)
+        std::cout <<"interieur"<<std::endl;
+    else
+        std::cout<<"exterieur"<<std::endl;
 
     return 0;
 }
