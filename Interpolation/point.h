@@ -14,6 +14,7 @@ class Point
 private:
     ublas::vector<double> m_coordonnees;
     int m_dimension;
+    double m_eval;
 
 public:
     Point(int dimension = 2);
@@ -39,6 +40,8 @@ public:
 
     friend std::ifstream& operator >>(std::ifstream&, Point&);
 
+    double eval() const;
+    void setEval(double eval);
 };
 
 std::ostream& operator << (std::ostream& stream, const Point& p);

@@ -1,8 +1,10 @@
 #include "point.h"
 
-Point::Point(int dimension):m_coordonnees(dimension, 0), m_dimension(dimension)
+
+Point::Point(int dimension):m_coordonnees(dimension, 0), m_dimension(dimension), m_eval(0)
 {}
-Point::Point(const Point& p):m_coordonnees(p.m_coordonnees), m_dimension(p.dimension())
+
+Point::Point(const Point& p):m_coordonnees(p.m_coordonnees), m_dimension(p.dimension()), m_eval(p.eval())
 {}
 
 Point::~Point(){}
@@ -17,6 +19,7 @@ Point& Point::operator = (const Point& p)
     m_coordonnees.clear();
     m_dimension = p.dimension();
     m_coordonnees = p.m_coordonnees;
+    m_eval = p.eval();
 
     return *this;
 }
@@ -92,6 +95,8 @@ bool operator == (const Point& p1, const Point& p2)
         {
             ret &= p1(i) == p2(i);
         }
+
+        ret &= (p1.eval() == p2.eval());
     }
     else
     {
@@ -103,12 +108,22 @@ bool operator == (const Point& p1, const Point& p2)
 
 std::ifstream& operator >>(std::ifstream& stream, Point & p)
 {
-    char c;
-
     for(int i = 0; i <  p.dimension(); i ++)
     {
-        stream>>p(i)>>c;
+        stream>>p(i);
     }
-    std::cout <<"c : "<<c<<std::endl;
+
+    stream>>p.m_eval;
+
     return stream;
+}
+
+double Point::eval() const
+{
+    return m_eval;
+}
+
+void Point::setEval(double eval)
+{
+    m_eval = eval;
 }
