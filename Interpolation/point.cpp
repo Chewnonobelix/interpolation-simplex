@@ -100,3 +100,15 @@ bool operator == (const Point& p1, const Point& p2)
 
     return ret;
 }
+
+std::ifstream& operator >>(std::ifstream& stream, Point & p)
+{
+    char c;
+
+    for(int i = 0; i <  p.dimension(); i ++)
+    {
+        stream>>p(i)>>c;
+    }
+    std::cout <<"c : "<<c<<std::endl;
+    return stream;
+}
