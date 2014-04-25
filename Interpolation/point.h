@@ -4,7 +4,7 @@
 #include <vector>
 #include <string>
 #include <iostream>
-
+#include <fstream>
 #include <boost/numeric/ublas/vector.hpp>
 
 using namespace boost::numeric;
@@ -34,9 +34,11 @@ public:
     double distance(const Point& p) const;
 
     static double distance(const Point &p1, const Point& p2);
-
     //distance d'un point p à un hyperplan A
     // d(p, A) = |b+ a1p1 + a2p2 + ... + anpn|/sqrt(a1^2 + a2^2 + .... + an^2)
+
+    friend std::ifstream& operator >>(std::ifstream&, Point&);
+
 };
 
 std::ostream& operator << (std::ostream& stream, const Point& p);
