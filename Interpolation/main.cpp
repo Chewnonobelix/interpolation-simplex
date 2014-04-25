@@ -118,6 +118,55 @@ void testVolume()
 
     std::cout<<"Volume du triangle (0,0) (1,0) (1,1)"<<s.hyperVolume()<<std::endl;
 
+
+    Point c1(3),c2(3),c3(3),c4(3);
+    std::vector<Point> pt2;
+
+    c1(0) = 1;
+    c1(1) = 1;
+    c1(2) = 1;
+
+    c2(0) = 1;
+    c2(1) = 1;
+    c2(2) = 2;
+
+    c3(0) = 1;
+    c3(1) = 2;
+    c3(2) = 1;
+
+    c4(0) = 2;
+    c4(1) = 1;
+    c4(2) = 1;
+
+    pt2.push_back(c1);
+    pt2.push_back(c2);
+    pt2.push_back(c3);
+    pt2.push_back(c4);
+
+    Simplexe s2(pt2);
+    Simplexe s3(2);
+    Simplexe s4(1);
+    s3(0) = c2;
+    s3(1) = c3;
+    s3(2) = c4;
+
+    s4(0) = c3;
+    s4(1) = c4;
+
+    std::cout<<"distance C3->C4 = "<<Point::distance(c3,c4)<<std::endl;
+    std::cout<<"Volume C2,C3,C4 = "<<s3.hyperVolume()<<std::endl;
+    std::cout<<"Volume C3,C4 = "<<s4.hyperVolume()<<std::endl;
+    std::cout<<"Distance C2, S4 = "<<s4.distance(c2)<<std::endl;
+    std::cout<<"Distance C1, S3 = "<<s3.distance(c1)<<std::endl;
+    std::cout<<"S2"<<std::endl;
+    try
+    {
+        std::cout<<"Volume s2 = "<<s2.hyperVolume()<<std::endl;
+    }
+    catch(std::string e)
+    {
+        std::cout<<"Erreur volume "<<e<<std::endl;
+    }
 }
 
 int main()
@@ -133,7 +182,7 @@ int main()
 
     testFactoriel();
     testPuissance2();
-    testDistance();
+    //    testDistance();
     testVolume();
 
     ublas::matrix<double> m1 (3, 3);

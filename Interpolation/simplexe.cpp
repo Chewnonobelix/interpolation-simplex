@@ -145,12 +145,14 @@ double Simplexe::hyperVolume() const
         std::vector<Point> temp;
         const Point& p = m_points[0];
 
-        temp.assign(m_points.begin() + 1, m_points.end());
+        temp.assign(m_points.begin() + 1, m_points.end() );
         const Simplexe st(temp);
+//        std::cout<<"Nouveau simplex "<<st.dimension()<<std::endl<<temp.size()<<std::endl;
         return (st.hyperVolume()*(st.distance(p)))/dimension();
     }
     else
     {
+//        std::cout<<"Renvoie "<<m_points.size()<<" "<<m_points[0].distance(m_points[1])<<std::endl;
         return m_points[0].distance(m_points[1]);
     }
 
@@ -158,29 +160,32 @@ double Simplexe::hyperVolume() const
 
 double Simplexe::distance(const Point & p) const
 {
-    ublas::matrix<double> matPoint(p.dimension(), p.dimension());
+    ublas::matrix<double> matPoint(dimension(), dimension());
 
-    for(int i = 0; i < p.dimension(); i ++)
+    for(int i = 0; i < dimension(); i ++)
     {
-        for(int j = 0; j < p.dimension(); j ++)
+        for(int j = 0; j < dimension(); j ++)
         {
             matPoint(i,j) = m_points[i](j);
         }
     }
 
-    ublas::vector<double> sol(p.dimension());
-    ublas::vector<double> eg(p.dimension());
+    ublas::vector<double> sol;
+    ublas::vector<double> eg(dimension());
 
-    for(int i = 0; i < p.dimension(); i ++)
+//    std::cout<<"Dimension mp1 = "<<matPoint.size1()<<" mp2="<<matPoint.size2()<<" p="<<p.dimension()<<" sol="<<sol.size()<<" eg="<<eg.size()<<"  dim="<<dimension()<<std::endl;
+    for(int i = 0; i < dimension(); i ++)
     {
         eg(i) = -1;
     }
 
-    sol = ublas::solve(matPoint, eg, ublas::lower_tag());
-
+//    std::cout<<"Mat "<<matPoint<<" Eg "<<eg<<" sol "<<sol<<" Point "<<p<<std::endl;
+//    std::cout<<"Avant"<<std::endl;
+    sol = ublas::solve(matPoint,eg, ublas::lower_tag());
+//    std::cout<<"solve"<<std::endl;
     double ret1 = 0, ret2 = 0;
 
-    for(int i = 0; i < p.dimension(); i ++)
+    for(int i = 0; i < dimension(); i ++)
     {
         ret1 += sol(i)*p(i);
         ret2 += sol(i)*sol(i);
