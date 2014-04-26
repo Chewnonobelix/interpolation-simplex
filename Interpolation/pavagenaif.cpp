@@ -18,6 +18,7 @@ void PavageNaif::pavage(const std::vector<Point> & pointSet)
         m_tab.push_back(first);
         for(int i = dimension() + 1; i< pointSet.size(); i ++)
         {
+            std::cout<<"Pavage p "<<pointSet[i]<<std::endl;
             Simplexe s(dimension());
             int j = 0;
             bool find = false;
@@ -25,6 +26,11 @@ void PavageNaif::pavage(const std::vector<Point> & pointSet)
             while(j < m_tab.size() && !find)
             {
                 find = m_tab[j].containPoint(pointSet[i]);
+                //                std::cout<<j<<" "<<m_tab.size()<<std::endl;
+                if(!find)
+                {
+                    j++;
+                }
             }
 
             if(find)
@@ -32,15 +38,16 @@ void PavageNaif::pavage(const std::vector<Point> & pointSet)
                 s = m_tab[j];
                 std::vector<Simplexe> nouveau = s.decomposition(pointSet[i]);
                 m_tab[j] = nouveau[0];
-//                std::cout<<"Taille "<<nouveau.size()<<std::endl;
+                //                std::cout<<"Taille "<<nouveau.size()<<std::endl;
                 for(int k = 1; k < nouveau.size(); k++)
                 {
-//                    std::cout<<"k = "<<k<<std::endl<<nouveau[k]<<std::endl;
+                    //                    std::cout<<"k = "<<k<<std::endl<<nouveau[k]<<std::endl;
                     m_tab.push_back(nouveau[k]);
                 }
             }
             else
             {
+                std::cout<<"Rentre !find "<<pointSet[i]<<std::endl;
                 Simplexe s2(s.dimension());
                 double d = -1;
 
@@ -56,12 +63,31 @@ void PavageNaif::pavage(const std::vector<Point> & pointSet)
                 }
 
                 int c = 0;
+                int index = 0;
+                Simplexe s3(s2.dimension());
+                ublas::matrix<double> m(s2.dimension(), s2.dimension()), mp(s2.dimension(), s2.dimension());
 
                 for(int b = 0; b <= s2.dimension(); b++)
                 {
-                    ublas::matrix<double> m, mp;
+
 
                     // Début remplissage Matrice
+                        int z = 0;
+                        for(int q = 0; q <= s2.dimension(); q++)
+                        {
+                            if(b != q)
+                            {
+                                for(int t = 0; t < s2.dimension(); t ++)
+                                {
+                                    mp(t, q-z) = s2(q)(t) - s2(b)(t);
+                                    m(t, q-z) = s2(q)(t) - pointSet[i](t);
+                                }
+                            }
+                            else
+                            {
+                                z++;
+                            }
+                        }
 
                     // Fin remplissage Matrice
 
@@ -69,15 +95,33 @@ void PavageNaif::pavage(const std::vector<Point> & pointSet)
                     dm = determinant(m);
                     dmp = determinant(mp);
 
+                    std::cout<<"dmp "<<dmp<<" dm "<<dm<<std::endl;
                     if(dm*dmp >= 0)
                     {
                         c ++;
                     }
+                    else
+                    {
+                        index = b;
+                    }
                 }
 
+                std::cout<<" c "<<c<<std::endl;
                 if(c == s2.dimension())
                 {
+                    for(int f = 0; f <= s2.dimension(); f++)
+                    {
+                        if(f != index)
+                        {
+                            s3(f) = s2(f);
+                        }
+                        else
+                        {
+                            s3(f) = pointSet[i];
+                        }
+                    }
 
+                    m_tab.push_back(s3);
                 }
             }
         }
@@ -99,12 +143,11 @@ Simplexe PavageNaif::getSimplexe(const Point & p, std::vector<double> & cb) cons
         if(it->containPoint(p, cb))
         {
             ret = *it;
-            std::cout<<"return "<<ret<<std::endl;
             return ret;
         }
     }
 
-     return ret;
+    return ret;
 }
 
 void PavageNaif::affichage() const

@@ -4,29 +4,27 @@ Simplexe::Simplexe(int dimension): m_points(dimension+1), m_dimension(dimension)
 Simplexe::Simplexe(const std::vector<Point> & t):m_points(t), m_dimension(t.size() - 1) {}
 Simplexe::Simplexe(const Simplexe& s): m_points(s.m_points), m_dimension(s.dimension())
 {
-    std::cout<<"Recopie"<<std::endl;
+//    std::cout<<"Recopie"<<std::endl;
 }
 Simplexe::~Simplexe() {}
 
 Simplexe& Simplexe::operator= (const Simplexe& s)
 {
-    std::cout<<"debut"<<std::endl;
     m_points.clear();
     m_points = s.m_points;
     m_dimension = s.dimension();
 
-    std::cout<<"fin"<<std::endl;
     return *this;
 }
 
 Point& Simplexe::operator ()(int index)
 {
-    if(index >= 0 && index < dimension() + 1)
+    if(index >= 0 && index <= dimension())
     {
         return m_points[index];
     }
 
-    throw std::string("Bad index");
+    throw std::string("Bad index simplex");
 }
 
 int Simplexe::dimension() const
@@ -36,12 +34,12 @@ int Simplexe::dimension() const
 
 const Point& Simplexe::operator()(int index) const
 {
-    if(index >= 0 && index < dimension()+1)
+    if(index >= 0 && index <= dimension())
     {
         return m_points[index];
     }
 
-    throw std::string("Bad index");
+    throw std::string("Bad index simplexe");
 }
 
 bool Simplexe::containPoint(const Point& p) const
@@ -52,10 +50,10 @@ bool Simplexe::containPoint(const Point& p) const
         if(resultat[i] >= 0){}
         else{interieur=false;}
     }
-    if(interieur)
-        std::cout <<"interieur"<<std::endl;
-    else
-        std::cout<<"exterieur"<<std::endl;
+//    if(interieur)
+//        std::cout <<"interieur"<<std::endl;
+//    else
+//        std::cout<<"exterieur"<<std::endl;
 
     return interieur;
 }
@@ -69,10 +67,10 @@ bool Simplexe::containPoint(const Point& p, std::vector<double>& bl) const
         if(resultat[i] >= 0){}
         else{interieur=false;}
     }
-    if(interieur)
-        std::cout <<"interieur"<<std::endl<<p<<std::endl;
-    else
-        std::cout<<"exterieur"<<std::endl<<p<<std::endl;
+//    if(interieur)
+//        std::cout <<"interieur"<<std::endl<<p<<std::endl;
+//    else
+//        std::cout<<"exterieur"<<std::endl<<p<<std::endl;
 
     for(int a = resultat.size() - 1; a >= 0; a --)
     {

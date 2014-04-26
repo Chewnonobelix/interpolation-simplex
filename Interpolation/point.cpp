@@ -30,7 +30,7 @@ double& Point::operator ()(int index)
     {
         return m_coordonnees(index);
     }
-    throw std::string("Out of range");
+    throw std::string("Out of range point");
 }
 
 double Point::operator ()(int index) const
@@ -39,7 +39,7 @@ double Point::operator ()(int index) const
     {
         return m_coordonnees(index);
     }
-    throw std::string("Out of range");
+    throw std::string("Out of range point");
 }
 
 double Point::distance(const Point& p) const
@@ -82,7 +82,7 @@ std::ostream& operator << (std::ostream& stream, const Point& p)
         }
     }
 
-    stream<<" Evaluation = "<<p.eval();
+//    stream<<" Evaluation = "<<p.eval();
     return stream;
 }
 
