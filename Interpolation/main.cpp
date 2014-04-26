@@ -194,7 +194,7 @@ void testLecture()
 void testPavage()
 {
     std::ifstream file;
-    file.open("test.txt", std::ios::in);
+    file.open("test3D.txt", std::ios::in);
     int d;
     file>>d;
     std::vector<Point> ps;
@@ -210,22 +210,22 @@ void testPavage()
     pv.pavage(ps);
     pv.affichage();
 
-    file.open("test_eval.txt", std::ios::in);
-    file>>d;
-    std::vector<Point> pse;
-    while(!file.eof())
-    {
-        Point p(d);
-        file>>p;
-        pse.push_back(p);
-    }
-    file.close();
+//    file.open("test_eval.txt", std::ios::in);
+//    file>>d;
+//    std::vector<Point> pse;
+//    while(!file.eof())
+//    {
+//        Point p(d);
+//        file>>p;
+//        pse.push_back(p);
+//    }
+//    file.close();
 
-    std::cout<<"Avant eval"<<std::endl;
-    for(int i = 0; i < pse.size(); i ++)
-    {
-        std::cout<<"Evaluation "<<pse[i]<<" = "<<pv.eval(pse[i])<<std::endl;
-    }
+//    std::cout<<"Avant eval"<<std::endl;
+//    for(int i = 0; i < pse.size(); i ++)
+//    {
+//        std::cout<<"Evaluation "<<pse[i]<<" = "<<pv.eval(pse[i])<<std::endl;
+//    }
 }
 
 int main()

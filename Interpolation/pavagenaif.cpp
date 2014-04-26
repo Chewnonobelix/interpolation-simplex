@@ -38,10 +38,9 @@ void PavageNaif::pavage(const std::vector<Point> & pointSet)
                 s = m_tab[j];
                 std::vector<Simplexe> nouveau = s.decomposition(pointSet[i]);
                 m_tab[j] = nouveau[0];
-                //                std::cout<<"Taille "<<nouveau.size()<<std::endl;
+
                 for(int k = 1; k < nouveau.size(); k++)
                 {
-                    //                    std::cout<<"k = "<<k<<std::endl<<nouveau[k]<<std::endl;
                     m_tab.push_back(nouveau[k]);
                 }
             }
@@ -50,7 +49,7 @@ void PavageNaif::pavage(const std::vector<Point> & pointSet)
                 std::cout<<"Rentre !find "<<pointSet[i]<<std::endl;
                 Simplexe s2(s.dimension());
                 double d = -1;
-
+                int di = 0;
                 for(int k = 0; k < m_tab.size(); k ++)
                 {
                     double temp = m_tab[k].distance(pointSet[i]);
@@ -59,6 +58,7 @@ void PavageNaif::pavage(const std::vector<Point> & pointSet)
                     {
                         d = temp;
                         s2 = m_tab[k];
+                        di = k;
                     }
                 }
 
@@ -69,8 +69,6 @@ void PavageNaif::pavage(const std::vector<Point> & pointSet)
 
                 for(int b = 0; b <= s2.dimension(); b++)
                 {
-
-
                     // Début remplissage Matrice
                         int z = 0;
                         for(int q = 0; q <= s2.dimension(); q++)
@@ -95,7 +93,6 @@ void PavageNaif::pavage(const std::vector<Point> & pointSet)
                     dm = determinant(m);
                     dmp = determinant(mp);
 
-                    std::cout<<"dmp "<<dmp<<" dm "<<dm<<std::endl;
                     if(dm*dmp >= 0)
                     {
                         c ++;
@@ -122,6 +119,15 @@ void PavageNaif::pavage(const std::vector<Point> & pointSet)
                     }
 
                     m_tab.push_back(s3);
+                }
+                else if (c == s2.dimension() + 1)
+                {
+                    std::vector<Simplexe> nouveau = s2.decomposition(pointSet[i]);
+                    m_tab[di] = nouveau[0];
+                    for(int k = 1; k < nouveau.size(); k++)
+                    {
+                        m_tab.push_back(nouveau[k]);
+                    }
                 }
             }
         }

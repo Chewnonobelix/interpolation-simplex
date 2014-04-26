@@ -2,10 +2,7 @@
 
 Simplexe::Simplexe(int dimension): m_points(dimension+1), m_dimension(dimension) {}
 Simplexe::Simplexe(const std::vector<Point> & t):m_points(t), m_dimension(t.size() - 1) {}
-Simplexe::Simplexe(const Simplexe& s): m_points(s.m_points), m_dimension(s.dimension())
-{
-//    std::cout<<"Recopie"<<std::endl;
-}
+Simplexe::Simplexe(const Simplexe& s): m_points(s.m_points), m_dimension(s.dimension()) {}
 Simplexe::~Simplexe() {}
 
 Simplexe& Simplexe::operator= (const Simplexe& s)
@@ -50,10 +47,6 @@ bool Simplexe::containPoint(const Point& p) const
         if(resultat[i] >= 0){}
         else{interieur=false;}
     }
-//    if(interieur)
-//        std::cout <<"interieur"<<std::endl;
-//    else
-//        std::cout<<"exterieur"<<std::endl;
 
     return interieur;
 }
@@ -67,10 +60,6 @@ bool Simplexe::containPoint(const Point& p, std::vector<double>& bl) const
         if(resultat[i] >= 0){}
         else{interieur=false;}
     }
-//    if(interieur)
-//        std::cout <<"interieur"<<std::endl<<p<<std::endl;
-//    else
-//        std::cout<<"exterieur"<<std::endl<<p<<std::endl;
 
     for(int a = resultat.size() - 1; a >= 0; a --)
     {
@@ -127,61 +116,20 @@ std::vector<double> Simplexe::coordonneeBarycentrique(const Point& p) const
         m(i,j) = 1;
     }
 
-    int x,y;
-//    std::cout<<"matrice "<<std::endl;
-//    for(x=0; x<h; x++){
-//        for(y=0; y<l; y++)
-//            std::cout<<m(x,y)<<" ";
-//        std::cout<<std::endl;
-//    }
-//    std::cout<<std::endl;
-
     for(i=0; i<h; i++){
-//        std::cout<<"matrice "<<i<<std::endl;
-//        for(x=0; x<h; x++){
-//            for(y=0; y<l; y++)
-//                std::cout<<m(x,y)<<" ";
-//            std::cout<<std::endl;
-//        }
-//        std::cout<<std::endl;
-
         if(m(i,i) != 1){
-//            std::cout<<"div pour 1"<<std::endl;
             pivot=m(i,i);
             for(j=0; j<l;j++)
                 m(i,j)=m(i,j)/pivot;
-//            for(x=0; x<h; x++){
-//                for(y=0; y<l; y++)
-//                    std::cout<<m(x,y)<<" ";
-//                std::cout<<std::endl;
-//            }
-//            std::cout<<std::endl;
         }
 
         for(j=i+1; j<h;j++){
             // pour chaque ligne suivante
-//            std::cout<<"****************modif ligne "<<j<<std::endl;
-
             pivot=m(j,i);
             for(k=0;k<l;k++)
                 m(j,k)=m(j,k)-pivot*m(i,k);
-//            std::cout<<"matrice "<<i<<std::endl;
-//            for(x=0; x<h; x++){
-//                for(y=0; y<l; y++)
-//                    std::cout<<m(x,y)<<" ";
-//                std::cout<<std::endl;
-//            }
-//            std::cout<<std::endl;
         }
     }
-
-//    std::cout<<"matrice "<<std::endl;
-//    for(x=0; x<h; x++){
-//        for(y=0; y<l; y++)
-//            std::cout<<m(x,y)<<" ";
-//        std::cout<<std::endl;
-//    }
-//    std::cout<<std::endl;
 
     std::vector<double> resultat;
     for(i=h-1;i>=0;i--){
@@ -192,14 +140,9 @@ std::vector<double> Simplexe::coordonneeBarycentrique(const Point& p) const
             r -= resultat[j]*m(i,k);
             k--;
         }
-//        std::cout<<r<<std::endl;
         resultat.push_back(r);
     }
-//    std::cout<<"resultat : ";
-//    for(i=0; i<resultat.size();i++){
-//        std::cout<<resultat[i]<<" ";
-//    }
-//    std::cout<<std::endl;
+
 
     return resultat;
 
@@ -275,12 +218,10 @@ double Simplexe::hyperVolume() const
 
         temp.assign(m_points.begin() + 1, m_points.end() );
         const Simplexe st(temp);
-//        std::cout<<"Nouveau simplex "<<st.dimension()<<std::endl<<temp.size()<<std::endl;
         return (st.hyperVolume()*(st.distance(p)))/dimension();
     }
     else
     {
-//        std::cout<<"Renvoie "<<m_points.size()<<" "<<m_points[0].distance(m_points[1])<<std::endl;
         return m_points[0].distance(m_points[1]);
     }
 
@@ -301,16 +242,12 @@ double Simplexe::distance(const Point & p) const
     ublas::vector<double> sol;
     ublas::vector<double> eg(dimension());
 
-//    std::cout<<"Dimension mp1 = "<<matPoint.size1()<<" mp2="<<matPoint.size2()<<" p="<<p.dimension()<<" sol="<<sol.size()<<" eg="<<eg.size()<<"  dim="<<dimension()<<std::endl;
     for(int i = 0; i < dimension(); i ++)
     {
         eg(i) = -1;
     }
 
-//    std::cout<<"Mat "<<matPoint<<" Eg "<<eg<<" sol "<<sol<<" Point "<<p<<std::endl;
-//    std::cout<<"Avant"<<std::endl;
     sol = ublas::solve(matPoint,eg, ublas::lower_tag());
-//    std::cout<<"solve"<<std::endl;
     double ret1 = 0, ret2 = 0;
 
     for(int i = 0; i < dimension(); i ++)
