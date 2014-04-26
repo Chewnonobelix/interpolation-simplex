@@ -3,6 +3,7 @@
 
 #include "abstractpavage.h"
 #include <vector>
+#include "boost/numeric/ublas/lu.hpp"
 
 /*
  * Idée de génie ?
@@ -18,7 +19,9 @@ class PavageNaif: public AbstractPavage<Simplexe>
 public:
     PavageNaif(int dimension);
     void pavage(const std::vector<Point>&);
-    Simplexe getSimplexe(const Point&) const;
+    Simplexe getSimplexe(const Point&, std::vector<double>&) const;
+
+    void affichage() const;
 };
 
 #endif // PAVAGENAIF_H

@@ -82,6 +82,7 @@ std::ostream& operator << (std::ostream& stream, const Point& p)
         }
     }
 
+    stream<<" Evaluation = "<<p.eval();
     return stream;
 }
 

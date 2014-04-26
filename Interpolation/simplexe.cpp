@@ -2,14 +2,20 @@
 
 Simplexe::Simplexe(int dimension): m_points(dimension+1), m_dimension(dimension) {}
 Simplexe::Simplexe(const std::vector<Point> & t):m_points(t), m_dimension(t.size() - 1) {}
-Simplexe::Simplexe(const Simplexe& s): m_points(s.m_points), m_dimension(s.dimension()) {}
+Simplexe::Simplexe(const Simplexe& s): m_points(s.m_points), m_dimension(s.dimension())
+{
+    std::cout<<"Recopie"<<std::endl;
+}
 Simplexe::~Simplexe() {}
 
 Simplexe& Simplexe::operator= (const Simplexe& s)
 {
+    std::cout<<"debut"<<std::endl;
     m_points.clear();
     m_points = s.m_points;
     m_dimension = s.dimension();
+
+    std::cout<<"fin"<<std::endl;
     return *this;
 }
 
@@ -38,10 +44,42 @@ const Point& Simplexe::operator()(int index) const
     throw std::string("Bad index");
 }
 
-bool Simplexe::containPoint(const Point&)
+bool Simplexe::containPoint(const Point& p) const
 {
+    std::vector<double> resultat = coordonneeBarycentrique(p);
+    bool interieur = true;
+    for(int i=0; i<resultat.size();i++){
+        if(resultat[i] >= 0){}
+        else{interieur=false;}
+    }
+    if(interieur)
+        std::cout <<"interieur"<<std::endl;
+    else
+        std::cout<<"exterieur"<<std::endl;
 
-    return false;
+    return interieur;
+}
+
+bool Simplexe::containPoint(const Point& p, std::vector<double>& bl) const
+{
+    bl.clear();
+    std::vector<double> resultat = coordonneeBarycentrique(p);
+    bool interieur = true;
+    for(int i=0; i<resultat.size();i++){
+        if(resultat[i] >= 0){}
+        else{interieur=false;}
+    }
+    if(interieur)
+        std::cout <<"interieur"<<std::endl<<p<<std::endl;
+    else
+        std::cout<<"exterieur"<<std::endl<<p<<std::endl;
+
+    for(int a = resultat.size() - 1; a >= 0; a --)
+    {
+        bl.push_back(resultat[a]);
+    }
+
+    return interieur;
 }
 
 std::vector<Simplexe> Simplexe::decomposition(const Point& p) const
@@ -53,7 +91,7 @@ std::vector<Simplexe> Simplexe::decomposition(const Point& p) const
         for(int i = 0; i < p.dimension() + 1; i++)
         {
             Simplexe s(p.dimension());
-            for(int j = 0; j < p.dimension(); j++)
+            for(int j = 0; j <= p.dimension(); j++)
             {
                 if(j == i)
                 {
@@ -71,15 +109,107 @@ std::vector<Simplexe> Simplexe::decomposition(const Point& p) const
     return ret;
 }
 
-double Simplexe::coordonneeBarycentrique(const Point& p) const
+std::vector<double> Simplexe::coordonneeBarycentrique(const Point& p) const
 {
+    int dim = p.dimension();
+    boost::numeric::ublas::matrix<double> m (dim+1, dim+2);
+    int i,j,k;
+    int h = dim+1;
+    int l = dim+2;
+    double pivot;
 
-    return 0;
+    // Remplissage du systeme
+    for(i=0;i<h-1;i++){
+        for(j=0;j<l-1;j++){
+            m(i,j) = m_points[j](i) - p(i);
+        }
+        m(i,j) = 0;
+    }
+    for(j=0;j<l;j++){
+        m(i,j) = 1;
+    }
+
+    int x,y;
+//    std::cout<<"matrice "<<std::endl;
+//    for(x=0; x<h; x++){
+//        for(y=0; y<l; y++)
+//            std::cout<<m(x,y)<<" ";
+//        std::cout<<std::endl;
+//    }
+//    std::cout<<std::endl;
+
+    for(i=0; i<h; i++){
+//        std::cout<<"matrice "<<i<<std::endl;
+//        for(x=0; x<h; x++){
+//            for(y=0; y<l; y++)
+//                std::cout<<m(x,y)<<" ";
+//            std::cout<<std::endl;
+//        }
+//        std::cout<<std::endl;
+
+        if(m(i,i) != 1){
+//            std::cout<<"div pour 1"<<std::endl;
+            pivot=m(i,i);
+            for(j=0; j<l;j++)
+                m(i,j)=m(i,j)/pivot;
+//            for(x=0; x<h; x++){
+//                for(y=0; y<l; y++)
+//                    std::cout<<m(x,y)<<" ";
+//                std::cout<<std::endl;
+//            }
+//            std::cout<<std::endl;
+        }
+
+        for(j=i+1; j<h;j++){
+            // pour chaque ligne suivante
+//            std::cout<<"****************modif ligne "<<j<<std::endl;
+
+            pivot=m(j,i);
+            for(k=0;k<l;k++)
+                m(j,k)=m(j,k)-pivot*m(i,k);
+//            std::cout<<"matrice "<<i<<std::endl;
+//            for(x=0; x<h; x++){
+//                for(y=0; y<l; y++)
+//                    std::cout<<m(x,y)<<" ";
+//                std::cout<<std::endl;
+//            }
+//            std::cout<<std::endl;
+        }
+    }
+
+//    std::cout<<"matrice "<<std::endl;
+//    for(x=0; x<h; x++){
+//        for(y=0; y<l; y++)
+//            std::cout<<m(x,y)<<" ";
+//        std::cout<<std::endl;
+//    }
+//    std::cout<<std::endl;
+
+    std::vector<double> resultat;
+    for(i=h-1;i>=0;i--){
+        double r = m(i,l-1); // partie droite
+        // puis on soustraire avec la partie gauche
+        k=l-1-1; //le dernier (en enlevent la partie droite)
+        for(j=0;j<resultat.size();j++){
+            r -= resultat[j]*m(i,k);
+            k--;
+        }
+//        std::cout<<r<<std::endl;
+        resultat.push_back(r);
+    }
+//    std::cout<<"resultat : ";
+//    for(i=0; i<resultat.size();i++){
+//        std::cout<<resultat[i]<<" ";
+//    }
+//    std::cout<<std::endl;
+
+    return resultat;
+
 }
 
 std::ostream& operator << (std::ostream& stream, const Simplexe& s)
 {
-    for(int i = 0; i < s.dimension(); i ++)
+    for(int i = 0; i <= s.dimension(); i ++)
     {
         stream<<s(i);
 

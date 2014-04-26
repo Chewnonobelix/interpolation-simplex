@@ -63,12 +63,13 @@ public:
 
     const Point& operator()(int index) const;
 
-    bool containPoint(const Point&);
+    bool containPoint(const Point&) const;
+    bool containPoint(const Point&, std::vector<double>&) const;
 
     std::vector<Simplexe> decomposition(const Point& p) const;
     std::vector<Simplexe> hyperFace(int); //Hyper face de dimension M, avec M < N
 
-    double coordonneeBarycentrique(const Point& p) const; //Mauvais type de retour
+    std::vector<double> coordonneeBarycentrique(const Point& p) const; //Mauvais type de retour
     double distance(const Point&) const;
 
     double hyperVolume() const;
