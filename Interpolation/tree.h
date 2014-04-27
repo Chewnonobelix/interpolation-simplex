@@ -5,6 +5,11 @@
 #include <vector>
 #include <iostream>
 
+/**
+ * @class Tree
+ * @tparam T Type de données
+ * @brief Classe template d'arbre-n-aire basique
+ */
 template<class T>
 class Tree
 {

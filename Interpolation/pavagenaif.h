@@ -5,20 +5,22 @@
 #include <vector>
 #include "boost/numeric/ublas/lu.hpp"
 
-/*
- * Idée de génie ?
- * Considérer les m points d'un ensemble M (m > n) comme m-1 simplex
- * Puis prendre les petits simplex (considérer les hyper volumes) tel que:
- * -Ts les m points soit utiliser
- * - Aucun n-simplexe ne se chevauche (à hyperface près)
- * - Puis reconstruire l'arbre depuis les feuilles vers la racine
+/**
+ * @class PavageNaif
+ * @brief Méthode de pavage basique, nous commençons par crée un premier simplexe avec les N+1 premiers point.
+ * Ensuite nous bouclons sur les points restant,
+ * si p[i] est inclue dans un simplexe existant alors nous décomposons le simplexe, supprimont l'ancien simplexe et ajoutons les nouveaux simplexe à la liste,
+ * sinon nous créons un nouveau simplexe et l'ajoutons à la liste.
+ *
  */
-
 class PavageNaif: public AbstractPavage<Simplexe>
 {
 public:
     PavageNaif(int dimension);
     void pavage(const std::vector<Point>&);
+    /**
+     * @brief Fonction de recherche dans une liste de simplexe
+     */
     Simplexe getSimplexe(const Point&, std::vector<double>&) const;
 
     void affichage() const;

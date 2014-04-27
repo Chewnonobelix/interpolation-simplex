@@ -9,6 +9,10 @@
 
 using namespace boost::numeric;
 
+/**
+ * @class Point
+ * @brief Classe stockant les coordonnées d'un point en dimension N, ainsi que son évaluation
+ */
 class Point
 {
 private:
