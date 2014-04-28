@@ -1,3 +1,5 @@
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wsign-compare"
 #include <iostream>
 #include "point.h"
 #include "simplexe.h"
@@ -11,42 +13,9 @@
 #include "boost/numeric/ublas/vector.hpp"
 using namespace std;
 
-bool testTree()
-{
-    Tree<double> test;
-
-    test.setData(42.2);
-
-    test.setChild(0, 13);
-
-    try
-    {
-        test(13.0).setChild(2, 72);
-    }
-    catch(std::string c)
-    {
-        std::cout<<" 72 "<<c<<std::endl;
-    }
-
-    try
-    {
-        std::cout<<"Contain 42.2 "<<test.contain(42.2)<<std::endl;
-        std::cout<<"Contain 13 "<<test.contain(13)<<std::endl;
-        std::cout<<"Contain 72 "<<test.contain(72)<<std::endl;
-        std::cout<<"Contain 0 "<<test.contain(0)<<std::endl;
-    }
-    catch(std::string c)
-    {
-        std::cout<<" IN "<<c<<std::endl;
-    }
-
-    std::cout<<"Nb Element "<<test.nbElement()<<std::endl;
-
-    return test.contain(42.2) && test.contain(13) && test.contain(72) && !test.contain(0);
-}
-
 void testFactoriel()
 {
+    std::cout<<"Test factoriel"<<std::endl;
     std::cout<<"fact(1) = "<<MetaProg::valueOf<1>::fact<<std::endl;
     std::cout<<"fact(2) = "<<MetaProg::valueOf<2>::fact<<std::endl;
     std::cout<<"fact(3) = "<<MetaProg::valueOf<3>::fact<<std::endl;
@@ -58,10 +27,14 @@ void testFactoriel()
     std::cout<<"fFact(3) = "<<MetaProg::fFactorial(3)<<std::endl;
     std::cout<<"fFact(4) = "<<MetaProg::fFactorial(4)<<std::endl;
     std::cout<<"fFact(5) = "<<MetaProg::fFactorial(5)<<std::endl;
+
+    std::cout<<"Fin test factoriel"<<std::endl;
 }
 
 void testPuissance2()
 {
+    std::cout<<"Test Puissance de 2"<<std::endl;
+
     std::cout<<"pow2(1) = "<<MetaProg::valueOf<1>::pow2<<std::endl;
     std::cout<<"pow2(2) = "<<MetaProg::valueOf<2>::pow2<<std::endl;
     std::cout<<"pow2(3) = "<<MetaProg::valueOf<3>::pow2<<std::endl;
@@ -75,10 +48,13 @@ void testPuissance2()
     std::cout<<"fPow(2,4) = "<<MetaProg::fPow(2,4)<<std::endl;
     std::cout<<"fPow(2,5) = "<<MetaProg::fPow(2,5)<<std::endl;
 
+    std::cout<<"Fin test puissance de 2"<<std::endl;
 }
 
 void testDistance()
 {
+    std::cout<<"Test distance"<<std::endl;
+
     Point p1(2), p2(2), p3(2);
 
     p1(0) = 0;
@@ -95,10 +71,14 @@ void testDistance()
     s2(1) = p3;
 
     std::cout<<"Distance p1 à Simplexe(p2, p3) "<<s2.distance(p1)<<std::endl;
+
+
+    std::cout<<"Fin test distance"<<std::endl;
 }
 
 void testVolume()
 {
+    std::cout<<"Test volume"<<std::endl;
     std::vector<Point> pt;
     Point p1(2), p2(2), p3(2);
 
@@ -169,32 +149,16 @@ void testVolume()
     {
         std::cout<<"Erreur volume "<<e<<std::endl;
     }
+
+
+    std::cout<<"Fin test Volume"<<std::endl;
 }
 
-void testLecture()
+void testPavage(std::string dim)
 {
+    std::cout<<"Test pavage "<<dim<<std::endl;
     std::ifstream file;
-    file.open("test.txt", std::ios::in);
-
-    int d;
-    file>>d;
-
-    while(!file.eof())
-    {
-        Point p(d);
-
-        file>>p;
-
-        std::cout<<p<<std::endl;
-    }
-
-    file.close();
-}
-
-void testPavage()
-{
-    std::ifstream file;
-    file.open("test3D.txt", std::ios::in);
+    file.open(("fichier_test\\pav"+dim+".txt").c_str(), std::ios::in);
     int d;
     file>>d;
     std::vector<Point> ps;
@@ -208,61 +172,41 @@ void testPavage()
     PavageNaif pv(d);
 
     pv.pavage(ps);
+    std::cout<<"Affichage point"<<std::endl;
+    for(int i = 0; i <ps.size();i++)
+    {
+        std::cout<<ps[i]<<std::endl;
+    }
     pv.affichage();
 
-//    file.open("test_eval.txt", std::ios::in);
-//    file>>d;
-//    std::vector<Point> pse;
-//    while(!file.eof())
-//    {
-//        Point p(d);
-//        file>>p;
-//        pse.push_back(p);
-//    }
-//    file.close();
+    file.open(std::string(("fichier_test\\eval")+dim+".txt").c_str(), std::ios::in);
+    file>>d;
+    std::vector<Point> pse;
+    while(!file.eof())
+    {
+        Point p(d);
+        file>>p;
+        pse.push_back(p);
+    }
+    file.close();
 
-//    std::cout<<"Avant eval"<<std::endl;
-//    for(int i = 0; i < pse.size(); i ++)
-//    {
-//        std::cout<<"Evaluation "<<pse[i]<<" = "<<pv.eval(pse[i])<<std::endl;
-//    }
+    for(int i = 0; i < pse.size(); i ++)
+    {
+        std::cout<<"Evaluation "<<pse[i]<<" = "<<pv.eval(pse[i])<<std::endl;
+    }
+
+    std::cout<<"Fin test pavage "<<dim<<std::endl;
 }
 
 int main()
 {
-    testPavage();
-//    int i,j,k;
-//    try
-//    {
-//        std::cout<<testTree()<<std::endl;
-//    }
-//    catch(std::string c)
-//    {
-//        std::cout<<c<<std::endl;
-//    }
-
-//    testFactoriel();
-//    testPuissance2();
-//    //    testDistance();
-//    testVolume();
-//    testLecture();
-    /*ublas::matrix<double> m1 (3, 3);
-    ublas::vector<double> m2 (3);
-    for (unsigned i = 0; i < 3; ++ i)
-        for (unsigned j = 0; j < 3; ++ j)
-        {
-            m1 (i, j) = 3 * i + j + 1;
-            m2 (i) = i;
-        }
-    std::cout << "m1 = "<< m1 << std::endl;
-    std::cout << "m2 = "<< m2 << std::endl;
-    std::cout << ublas::solve (m1, m2, ublas::lower_tag ()) << std::endl; //M1*result = M2
-    std::cout << ublas::solve (m2, m1, ublas::lower_tag ()) << std::endl; //M2*result = M1
-    std::cout << "m1*m2 = "<<prod(m1,m2) << std::endl;
-    std::cout << "m2*m1 = "<<prod(m2,m1) << std::endl;
-*/
-//    parser p;
-//    p.lecture();
+    testFactoriel();
+    testPuissance2();
+    testDistance();
+    testVolume();
+    testPavage("2D");
+    testPavage("3D");
+    testPavage("4D");
 
     return 0;
 }

@@ -4,6 +4,8 @@
 #include <vector>
 #include "point.h"
 #include "simplexe.h"
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-local-typedefs"
 #include "boost/numeric/ublas/lu.hpp"
 
 /**
@@ -41,7 +43,7 @@ public:
      * @param[in] p Point
      * @param[out] coefficientBarycentrique coefficient barycentrique du point p dans le simplexe renvoyer
      */
-    virtual Simplexe getSimplexe(const Point&, std::vector<double>&) const = 0;
+    virtual Simplexe getSimplexe(const Point&) const = 0;
 
     /**
      * @brief Fonction d'évaluation de p dans le pavage
@@ -51,44 +53,24 @@ public:
     double eval(Point & p)
     {
         std::vector<double> cb;
-        Simplexe s = getSimplexe(p, cb);
-
+        Simplexe s = getSimplexe(p);
         double ret = 0;
-        for(int i = 0; i < cb.size(); i++)
+
+        if(s.init())
         {
-            ret += cb[i]*s(i).eval();
+            cb = s.coordonneeBarycentrique(p);
+            for(int i = 0; i < cb.size(); i++)
+            {
+                ret += cb[i]*s(i).eval();
+            }
+
+            p.setEval(ret);
         }
-
-        p.setEval(ret);
-
+        else
+        {
+            std::cout<<"Point a l'exterieur du pavage"<<std::endl;
+        }
         return ret;
-    }
-
-    /*
-     * determinant_sign et determinant fct utilisé pour calculer les déterminant de matrices ublas
-     */
-
-    static int determinant_sign(const ublas::permutation_matrix<std ::size_t>& pm)
-    {
-        int pm_sign=1;
-        std::size_t size = pm.size();
-        for (std::size_t i = 0; i < size; ++i)
-            if (i != pm(i))
-                pm_sign *= -1.0; // swap_rows would swap a pair of rows here, so we change sign
-        return pm_sign;
-    }
-
-    static double determinant( ublas::matrix<double>& m ) {
-        ublas::permutation_matrix<std::size_t> pm(m.size1());
-        double det = 1.0;
-        if( ublas::lu_factorize(m,pm) ) {
-            det = 0.0;
-        } else {
-            for(int i = 0; i < m.size1(); i++)
-                det *= m(i,i); // multiply by elements on diagonal
-            det = det * determinant_sign( pm );
-        }
-        return det;
     }
 };
 

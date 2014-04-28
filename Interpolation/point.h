@@ -1,10 +1,14 @@
 #ifndef POINT_H
 #define POINT_H
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wsign-compare"
 
 #include <vector>
 #include <string>
 #include <iostream>
 #include <fstream>
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-local-typedefs"
 #include <boost/numeric/ublas/vector.hpp>
 
 using namespace boost::numeric;
@@ -32,10 +36,21 @@ public:
 
     friend bool operator == (const Point&, const Point&);
 
-    double& operator ()(int index);
+    /**
+     * @brief operator ()
+     * @param[in] index int
+     * @return Composante du point, avec 0<=index<dimension
+     * @throw Out of range si index < 0 ou index >= dimension
+     */
 
+    double& operator ()(int index);
     double operator ()(int index) const;
 
+    /**
+     * @brief distance
+     * @param[in] p Point
+     * @return distance entre this et p;
+     */
     double distance(const Point& p) const;
 
     static double distance(const Point &p1, const Point& p2);

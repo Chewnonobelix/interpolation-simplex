@@ -1,8 +1,8 @@
 #include "simplexe.h"
 
-Simplexe::Simplexe(int dimension): m_points(dimension+1), m_dimension(dimension) {}
-Simplexe::Simplexe(const std::vector<Point> & t):m_points(t), m_dimension(t.size() - 1) {}
-Simplexe::Simplexe(const Simplexe& s): m_points(s.m_points), m_dimension(s.dimension()) {}
+Simplexe::Simplexe(int dimension): m_points(dimension+1), m_dimension(dimension), m_init(false) {}
+Simplexe::Simplexe(const std::vector<Point> & t):m_points(t), m_dimension(t.size() - 1), m_init(true) {}
+Simplexe::Simplexe(const Simplexe& s): m_points(s.m_points), m_dimension(s.dimension()), m_init(s.init()) {}
 Simplexe::~Simplexe() {}
 
 Simplexe& Simplexe::operator= (const Simplexe& s)
@@ -10,6 +10,7 @@ Simplexe& Simplexe::operator= (const Simplexe& s)
     m_points.clear();
     m_points = s.m_points;
     m_dimension = s.dimension();
+    m_init = s.init();
 
     return *this;
 }
@@ -18,6 +19,7 @@ Point& Simplexe::operator ()(int index)
 {
     if(index >= 0 && index <= dimension())
     {
+        m_init = true;
         return m_points[index];
     }
 
@@ -41,32 +43,7 @@ const Point& Simplexe::operator()(int index) const
 
 bool Simplexe::containPoint(const Point& p) const
 {
-    std::vector<double> resultat = coordonneeBarycentrique(p);
-    bool interieur = true;
-    for(int i=0; i<resultat.size();i++){
-        if(resultat[i] >= 0){}
-        else{interieur=false;}
-    }
-
-    return interieur;
-}
-
-bool Simplexe::containPoint(const Point& p, std::vector<double>& bl) const
-{
-    bl.clear();
-    std::vector<double> resultat = coordonneeBarycentrique(p);
-    bool interieur = true;
-    for(int i=0; i<resultat.size();i++){
-        if(resultat[i] >= 0){}
-        else{interieur=false;}
-    }
-
-    for(int a = resultat.size() - 1; a >= 0; a --)
-    {
-        bl.push_back(resultat[a]);
-    }
-
-    return interieur;
+    return calcul(p).size() == 0;
 }
 
 std::vector<Simplexe> Simplexe::decomposition(const Point& p) const
@@ -169,13 +146,17 @@ bool operator == (const Simplexe& s1, const Simplexe& s2)
 {
     bool ret = true;
 
-    if(s1.dimension() == s2.dimension())
+    if(s1.dimension() == s2.dimension() && s1.init() && s2.init())
     {
         for(int i = 0; i < s1.dimension()+1; i ++)
         {
             //TODO A revoir
             ret &= s1(i) == s2(i);
         }
+    }
+    else if(!s1.init() && !s2.init())
+    {
+        ret = true;
     }
     else
     {
@@ -257,4 +238,50 @@ double Simplexe::distance(const Point & p) const
     }
 
     return ((abs(ret1) + 1)/sqrt(ret2));
+}
+
+bool Simplexe::init() const
+{
+    return m_init;
+}
+
+std::vector<int> Simplexe::calcul(const Point & p) const
+{
+    std::vector<int> ret;
+    ublas::matrix<double> m(dimension(), dimension()), mp(dimension(), dimension());
+
+    for(int b = 0; b <= dimension(); b++)
+    {
+        // Début remplissage Matrice
+        int z = 0;
+        for(int q = 0; q <= dimension(); q++)
+        {
+            if(b != q)
+            {
+                for(int t = 0; t < dimension(); t ++)
+                {
+                    mp(t, q-z) = (*this)(q)(t) - (*this)(b)(t);
+                    m(t, q-z) = (*this)(q)(t) - p(t);
+                }
+            }
+            else
+            {
+                z++;
+            }
+        }
+
+        // Fin remplissage Matrice
+
+        double dm, dmp;
+        dm = determinant(m);
+        dmp = determinant(mp);
+
+        //Si dm et dmp sont du même signe, ou si l'un est égal à 0, alors p et s2(b) sont du même coté de la face opposé à s2(b)
+        if(dm*dmp < 0)
+        {
+            ret.push_back(b);
+        }
+    }
+
+    return ret;
 }

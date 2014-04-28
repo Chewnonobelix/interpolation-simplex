@@ -10,6 +10,7 @@ SOURCES += main.cpp \
     abstractpavage.cpp \
     pavagenaif.cpp \
 #    parser.cpp
+    pavagenaiftree.cpp
 
 HEADERS += \
     point.h \
@@ -18,6 +19,7 @@ HEADERS += \
     abstractpavage.h \
     pavagenaif.h \
 #    parser.h
+    pavagenaiftree.h
 
 INCLUDEPATH += ./boost
 

@@ -1,10 +1,10 @@
-#include "pavagenaif.h"
+#include "pavagenaiftree.h"
 
-PavageNaif::PavageNaif(int dimension): AbstractPavage(dimension)
+PavageNaifTree::PavageNaifTree(int dim): AbstractPavage(dim)
 {
 }
 
-void PavageNaif::pavage(const std::vector<Point> & pointSet)
+void PavageNaifTree::pavage(const std::vector<Point> & pointSet)
 {
     if(pointSet.size() >= dimension() + 1)
     {
@@ -21,10 +21,10 @@ void PavageNaif::pavage(const std::vector<Point> & pointSet)
             Simplexe s(dimension());
             int j = 0;
             bool find = false;
-            int di = 0;
+
             while(j < m_tab.size() && !find)
             {
-                find = m_tab[j].containPoint(pointSet[i]);
+                find = m_tab[j].data().containPoint(pointSet[i]);
                 if(!find)
                 {
                     j++;
@@ -33,37 +33,52 @@ void PavageNaif::pavage(const std::vector<Point> & pointSet)
 
             if(find)
             {
-                s = m_tab[j];
-                std::vector<Simplexe> nouveau = s.decomposition(pointSet[i]);
-                m_tab[j] = nouveau[0]; //Remplacement de l'ancien simplexe
-
-                for(int k = 1; k < nouveau.size(); k++)
+                Tree<Simplexe> ts = m_tab[j];
+                while(ts.hasChild())
                 {
-                    m_tab.push_back(nouveau[k]);
+                    bool next = false;
+                    int j = 0;
+                    while(!next && j < ts.nbChild())
+                    {
+                        if(ts.data().containPoint(pointSet[i]))
+                        {
+                            ts = ts.children()[j];
+                            next = true;
+                        }
+                        else
+                        {
+                            j++;
+                        }
+
+                    }
+                }
+
+                s = ts.data();
+                std::vector<Simplexe> nouveau = s.decomposition(pointSet[i]);
+                for(int j = 0; j < nouveau.size(); j ++)
+                {
+                    ts.addChild(j, nouveau[j]);
                 }
             }
             else
             {
                 Simplexe s2(s.dimension());
                 double d = -1;
+                int di = 0;
                 //Recherche du simplexe le plus proche
                 for(int k = 0; k < m_tab.size(); k ++)
                 {
-                    double temp = m_tab[k].distance(pointSet[i]);
+                    double temp = m_tab[k].data().distance(pointSet[i]);
 
                     if(d == -1 || temp < d)
                     {
                         d = temp;
-                        s2 = m_tab[k];
+                        s2 = m_tab[k].data();
                         di = k;
                     }
                 }
 
                 Simplexe s3(s2.dimension()); //Futur nouveau simplexe
-
-                //Si le nombre de dm*dmp est égal à la dimension de l'espace alors on peut crée un nouveau simplex
-                //Sinon si le nombre de dm*dmp est égal à la dimension + 1 alors on décompose s2
-                //(voir fct calcul de simplexe)
                 std::vector<int> c = s2.calcul(pointSet[i]);
                 if(c.size() > 0 && c.size() < s2.dimension()+1)
                 {
@@ -84,7 +99,7 @@ void PavageNaif::pavage(const std::vector<Point> & pointSet)
                         m_tab.push_back(s3);
                     }
                 }
-             }
+            }
         }
     }
     else
@@ -93,28 +108,55 @@ void PavageNaif::pavage(const std::vector<Point> & pointSet)
     }
 }
 
-Simplexe PavageNaif::getSimplexe(const Point & p) const
+Simplexe PavageNaifTree::getSimplexe(const Point & p) const
 {
     Simplexe ret;
 
-    for(std::vector<Simplexe>::const_iterator it = m_tab.begin();
+    for(std::vector<Tree<Simplexe>>::const_iterator it = m_tab.begin();
         it != m_tab.end(); it ++)
     {
-        if(it->containPoint(p))
+        if(!(ret == Simplexe(p.dimension())))
         {
-            ret = *it;
-            return ret;
+            ret = treeSearch(*it, p).data();
         }
     }
 
     return ret;
 }
 
-void PavageNaif::affichage() const
+void PavageNaifTree::affichage() const
 {
     std::cout<<"Pavage"<<std::endl;
     for(int i = 0; i < m_tab.size(); i ++)
     {
-        std::cout<<m_tab[i]<<std::endl;
+        //        std::cout<<m_tab[i]<<std::endl;
     }
+}
+
+Tree<Simplexe> PavageNaifTree::treeSearch(const Tree<Simplexe> & t, const Point& p) const
+{
+    if(!t.hasChild() && t.data().containPoint(p))
+    {
+        return t;
+    }
+    else if(!t.hasChild())
+    {
+        return Simplexe(p.dimension());
+    }
+    else
+    {
+        bool find = false;
+        int i = 0;
+
+        while(!find && i < t.nbChild())
+        {
+            Tree<Simplexe> ret = treeSearch(t(i), p);
+            if(!(ret.data() == Simplexe(p.dimension())))
+            {
+                return ret;
+            }
+        }
+    }
+
+    return Simplexe(p.dimension());
 }

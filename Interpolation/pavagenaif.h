@@ -1,9 +1,10 @@
 #ifndef PAVAGENAIF_H
 #define PAVAGENAIF_H
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wsign-compare"
 #include "abstractpavage.h"
 #include <vector>
-#include "boost/numeric/ublas/lu.hpp"
 
 /**
  * @class PavageNaif
@@ -21,7 +22,7 @@ public:
     /**
      * @brief Fonction de recherche dans une liste de simplexe
      */
-    Simplexe getSimplexe(const Point&, std::vector<double>&) const;
+    Simplexe getSimplexe(const Point&) const;
 
     void affichage() const;
 };
